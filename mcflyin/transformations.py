@@ -1,9 +1,9 @@
   # -*- coding: utf-8 -*-
 '''
-Binificator
+Transformations
 -------
 
-Import and bin JSON timeseries data by various timescales
+Pandas Data Transformations
 
 '''
 import json
@@ -111,7 +111,7 @@ def minutes(data):
     '''Test for rolling minutes'''
     df = pd.DataFrame({'Check-in': np.ones(len(data))},
                       index=pd.to_datetime(data))
-    minutes = pd_utils.resample(df, freq=[('T', 'Minutely')])['Minutely']
+    minutes = resample(df=df, freq=[('T', 'Minutely')])['Minutely']
     rolling = pd.rolling_sum(minutes['Minutely'], 60, min_periods=0)
     resampled = rolling.resample('H', how='mean', closed='right')
     minutely = pd.DataFrame({'Rolling': resampled})
