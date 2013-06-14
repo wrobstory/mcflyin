@@ -65,10 +65,30 @@ def to_df(data):
 
 
 @jsonify
-def resample(df=None, freq=None, fill='pad'):
+def resample(df=None, freq=None):
     '''Pandas resampling convenience function'''
     key, value = freq.keys()[0], freq.values()[0]
     return df.resample(key, how='sum').rename(columns={'Check-in': value})
+
+
+@jsonify
+def rolling_sum(df=None, window=None, freq=None):
+    '''Pandas rolling_sum convenience function'''
+    key, value = freq.keys()[0], freq.values()[0]
+    sampled = df.resample(key, how='sum').rename(columns={'Check-in': value})
+    rolling = pd.rolling_sum(sampled, window, min_periods=0)
+    return rolling
+
+
+@jsonify
+def day_of_week(df=None, freq=None):
+    '''Calculate daily statistics, given a sampling frequency'''
+    df = df.resample('T', how='sum')
+    df['DoW'] = df['Hour'] = df.index
+    weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+                5: 'Friday', 6: 'Saturday', 7: 'Sunday', }
+    df['DoW'] = df['DoW'].apply(lambda x: weekdays[x.isoweekday()])
+    df['Hour'] = df['Hour'].apply(lambda x: x.hour)
 
 
 def combined_resample(df=None, freq=None, fill='pad'):
@@ -101,22 +121,10 @@ def combined_resample(df=None, freq=None, fill='pad'):
     for astype in freq:
         key, value = astype.keys()[0], astype.values()[0]
         resampled[value] = (df.resample(key, how='sum')
-                          .rename(columns={'Check-in': value}))
+                            .rename(columns={'Check-in': value}))
         concat_list.append(resampled[value]
                            .resample(freq[0][0], fill_method=fill, closed='right'))
 
     resampled['Combined'] = pd.concat(concat_list, axis=1)
 
     return resampled
-
-
-@jsonify
-def minutes(data):
-    '''Test for rolling minutes'''
-    df = pd.DataFrame({'Check-in': np.ones(len(data))},
-                      index=pd.to_datetime(data))
-    minutes = resample(df=df, freq=[('T', 'Minutely')])['Minutely']
-    rolling = pd.rolling_sum(minutes['Minutely'], 60, min_periods=0)
-    resampled = rolling.resample('H', how='mean', closed='right')
-    minutely = pd.DataFrame({'Rolling': resampled})
-    return minutely

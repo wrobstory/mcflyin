@@ -10,8 +10,8 @@ import requests
 
 
 def resample(data=None, freq=None, to_df=False):
-    '''Generate Pandas DataFrame at given sampling rate from list of
-    timestamp strings
+    '''Generate Timeseries of given sampling rate from list of
+    timestamp strings.
 
     Must use one of the Pandas offset aliases:
     http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
@@ -37,6 +37,49 @@ def resample(data=None, freq=None, to_df=False):
 
     send = {'freq': json.dumps(freq), 'data': json.dumps(data)}
     r = requests.post('http://127.0.0.1:5000/resample', data=send)
+    response = r.json
+
+    if to_df:
+        import pandas as pd
+        key = response.keys()[0]
+        index = pd.to_datetime(response[key]['time'])
+        df = pd.DataFrame({key: response[key]['data']}, index=index)
+        return df
+
+    return response
+
+
+def rolling_sum(data=None, window=None, freq=None, to_df=False):
+    '''Generate Rolling sum for a timeseries of a given sampling rate from list of
+    timestamp strings.
+
+    Must use one of the Pandas offset aliases for the key of freq:
+    http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
+
+    Parameters
+    ----------
+    data: list, default None
+        list of timestamp strings
+    window: int, default None
+        Sampling window. Ex: If you pass {'T', 'Minutely'} as the freq, a window
+        of 60 will create an hourly rolling mean.
+    freq: dict, default None
+        Frequency to sample by. Ex: {'D', 'Daily'}
+    to_df: boolean, default False
+        Convert dict response into a Pandas DataFrame
+
+    Returns
+    -------
+    Dict or Pandas DataFrame of resampled values
+
+    Example
+    -------
+    >>>rolling = rolling_sum(data=mylist, window=60, freq={'T': 'Minutely'})
+
+    '''
+
+    send = {'freq': json.dumps(freq), 'data': json.dumps(data), 'window': window}
+    r = requests.post('http://127.0.0.1:5000/rolling_sum', data=send)
     response = r.json
 
     if to_df:
@@ -75,5 +118,3 @@ def combined_resample(data=None, freq=None):
     send = {'freq': json.dumps(freq), 'data': json.dumps(data)}
     r = requests.post('http://127.0.0.1:5000/resample', data=send)
     return r.json()
-
-

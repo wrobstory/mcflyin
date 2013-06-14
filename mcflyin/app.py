@@ -50,7 +50,7 @@ def github(username):
     '''Return the last 30 github event timestamps'''
     if request.method == 'GET':
         resp = Response(json.dumps(get_github(username)), status=200,
-                        mimetype='application.json')
+                        mimetype='application/json')
         return resp
 
 
@@ -63,7 +63,21 @@ def resample():
         df = tr.to_df(data)
         json_return = tr.resample(df=df, freq=freq)
         resp = Response(json.dumps(json_return), status=200,
-                        mimetype='application.json')
+                        mimetype='application/json')
+        return resp
+
+
+@app.route('/rolling_sum', methods=['POST'])
+def rolling_sum():
+    '''Return a JSON of resampled timestamp data'''
+    if request.method == 'POST':
+        data = json.loads(request.form['data'])
+        freq = json.loads(request.form['freq'])
+        window = int(request.form['window'])
+        df = tr.to_df(data)
+        json_return = tr.rolling_sum(df=df, window=window, freq=freq)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application/json')
         return resp
 
 
