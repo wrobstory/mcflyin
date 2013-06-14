@@ -7,7 +7,7 @@ McFlyin App: A RESTish API for transforming time series data
 import json
 import pandas as pd
 import numpy as np
-from flask import Flask, request
+from flask import Flask, Response, request
 import requests
 import transformations as tr
 
@@ -49,7 +49,9 @@ app = Flask(__name__)
 def github(username):
     '''Return the last 30 github event timestamps'''
     if request.method == 'GET':
-        return json.dumps(get_github(username))
+        resp = Response(json.dumps(get_github(username)), status=200,
+                        mimetype='application.json')
+        return resp
 
 
 @app.route('/resample', methods=['POST'])
@@ -60,7 +62,9 @@ def resample():
         freq = json.loads(request.form['freq'])
         df = tr.to_df(data)
         json_return = tr.resample(df=df, freq=freq)
-        return json.dumps(json_return)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application.json')
+        return resp
 
 
 def run():

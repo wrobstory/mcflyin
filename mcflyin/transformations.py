@@ -31,11 +31,15 @@ def jsonify(func):
             elif hasattr(obj, '__int__'):
                 return int(obj)
             else:
-                raise LoadError('cannot serialize index of type '
+                raise TypeError('cannot serialize index of type '
                                 + type(obj).__name__)
 
-        jsonified = {x[0]: [{typeit(y[0]):typeit(y[1])} for y in x[1].iteritems()]
-                     for x in df.iterkv()}
+        jsonified = {}
+        for x in df.iterkv():
+            jsonified[x[0]] = {'time': [], 'data': []}
+            for y in x[1].iteritems():
+                jsonified[x[0]]['time'].append(typeit(y[0]))
+                jsonified[x[0]]['data'].append(typeit(y[1]))
 
         return jsonified
 
