@@ -87,8 +87,11 @@ def day_of_week(df=None, freq=None):
     df['DoW'] = df['Hour'] = df.index
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday', }
+    order = [y for x, y in weekdays.iteritems()]
     df['DoW'] = df['DoW'].apply(lambda x: weekdays[x.isoweekday()])
     df['Hour'] = df['Hour'].apply(lambda x: x.hour)
+    daily = df.groupby('DoW').sum()['Check-in'].rename(order)
+    hourly = df.groupby('Hour').sum()['Check-in']
 
 
 def combined_resample(df=None, freq=None, fill='pad'):

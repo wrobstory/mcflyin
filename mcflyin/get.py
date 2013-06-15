@@ -77,6 +77,8 @@ def rolling_sum(data=None, window=None, freq=None, to_df=False):
     >>>rolling = rolling_sum(data=mylist, window=60, freq={'T': 'Minutely'})
 
     '''
+    if not freq or not window:
+        raise ValueError('Please include all required parameters.')
 
     send = {'freq': json.dumps(freq), 'data': json.dumps(data), 'window': window}
     r = requests.post('http://127.0.0.1:5000/rolling_sum', data=send)
@@ -114,6 +116,9 @@ def combined_resample(data=None, freq=None):
     -------
     >>>sampled = resample(data=mylist, freq=[{'H': 'Hourly'}, {'D':'Daily'}])
     '''
+
+    if not freq or not window:
+        raise ValueError('Please include all required parameters.')
 
     send = {'freq': json.dumps(freq), 'data': json.dumps(data)}
     r = requests.post('http://127.0.0.1:5000/resample', data=send)
