@@ -9,7 +9,9 @@ Pandas Data Transformations
 import json
 import functools
 import pandas as pd
+import pandas.tseries.offsets as offsets
 import numpy as np
+import statsmodels.api as sm
 
 
 def jsonify(func):
@@ -58,7 +60,7 @@ def to_df(data):
 
     '''
 
-    df = pd.DataFrame({'Check-in': np.ones(len(data))},
+    df = pd.DataFrame({'Events': np.ones(len(data))},
                       index=pd.to_datetime(data))
 
     return df
@@ -68,26 +70,25 @@ def to_df(data):
 def resample(df=None, freq=None):
     '''Pandas resampling convenience function'''
     key, value = freq.keys()[0], freq.values()[0]
-    return df.resample(key, how='sum').rename(columns={'Check-in': value})
+    return df.resample(key, how='sum').rename(columns={'Events': value})
 
 
 @jsonify
 def rolling_sum(df=None, window=None, freq=None):
     '''Pandas rolling_sum convenience function'''
     key, value = freq.keys()[0], freq.values()[0]
-    sampled = df.resample(key, how='sum').rename(columns={'Check-in': value})
+    sampled = df.resample(key, how='sum').rename(columns={'Events': value})
     rolling = pd.rolling_sum(sampled, window, min_periods=0)
     return rolling
 
 
 def day_hours(df):
     '''Get Hourly and Daily columns from DataFrame timestamps'''
-    df = df.resample('T', how='sum')
     df['DoW'] = df['Hour'] = df.index
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
     order = [y for x, y in weekdays.iteritems()]
-    df['DoW'] = df['DoW'].apply(lambda x: weekdays[x.isoweekday()])
+    df['DoW'] = df['DoW'].apply(lambda x: (x.hour, weekdays[x.isoweekday()]))
     df['Hour'] = df['Hour'].apply(lambda x: x.hour)
     return df, order
 
@@ -98,7 +99,7 @@ def daily(df=None):
     key = lambda x: x.isoweekday()
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
-    daily = df.groupby(key).sum()['Check-in']
+    daily = df.groupby(key).sum()['Events']
     daily = pd.DataFrame(daily.rename(weekdays))
     return daily
 
@@ -111,20 +112,40 @@ def hourly(df=None):
     return hourly
 
 
-def weekly_hours(df=None):
+def daily_hours(df=None, to_json=False):
     '''Hourly distribution by day of week'''
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
     key1 = lambda x: x.isoweekday()
     key2 = lambda x: x.hour
-    weekly = df.groupby([key1, key2]).sum().unstack(0)['Check-in']
+    weekly = df.groupby([key1, key2]).sum().unstack(0)['Events']
     weekly.index.name = 'Hour'
     weekly = weekly.rename(columns=weekdays)
-    jsonified = jsonify(lambda frame: frame)
-    weekly_hours = {}
-    for day in weekly.iterkv():
-        weekly_hours.update(jsonified(pd.DataFrame(day[1])))
-    return weekly_hours
+    if to_json:
+        jsonified = jsonify(lambda frame: frame)
+        weekly_hours = {}
+        for day in weekly.iterkv():
+            weekly_hours.update(jsonified(pd.DataFrame(day[1])))
+        return weekly_hours
+    else:
+        return weekly
+
+
+@jsonify
+def forward(df=None, periods=180):
+    '''Generate hourly distribution of events for the next `periods`'''
+    weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+                5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
+    dist = daily_hours(df, to_json=False)
+    hourly = df.resample('H', how='sum')
+    h_range = pd.date_range(hourly.index[-1] + offsets.Hour(),
+                            periods=periods, freq='H')
+    forward = pd.DataFrame({'Events': h_range}, index=h_range)
+    to_tuple = lambda x: (x.hour, weekdays[x.isoweekday()])
+    forward['Events'] = forward['Events'].apply(to_tuple)
+    index_dist = lambda x: dist[x[1]][x[0]]
+    forward['Events'] = forward['Events'].apply(index_dist)
+    return forward
 
 
 def combined_resample(df=None, freq=None, fill='pad'):
@@ -157,7 +178,7 @@ def combined_resample(df=None, freq=None, fill='pad'):
     for astype in freq:
         key, value = astype.keys()[0], astype.values()[0]
         resampled[value] = (df.resample(key, how='sum')
-                            .rename(columns={'Check-in': value}))
+                            .rename(columns={'Events': value}))
         concat_list.append(resampled[value]
                            .resample(freq[0][0], fill_method=fill, closed='right'))
 

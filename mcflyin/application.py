@@ -56,7 +56,7 @@ def github(username):
 
 @app.route('/resample', methods=['POST'])
 def resample():
-    '''Return a JSON of resampled timestamp data'''
+    '''Return a JSON of resampled event data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
         freq = json.loads(request.form['freq'])
@@ -69,7 +69,7 @@ def resample():
 
 @app.route('/rolling_sum', methods=['POST'])
 def rolling_sum():
-    '''Return a JSON of resampled timestamp data'''
+    '''Return a JSON of rolling summed event data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
         freq = json.loads(request.form['freq'])
@@ -83,7 +83,7 @@ def rolling_sum():
 
 @app.route('/daily', methods=['POST'])
 def daily():
-    '''Return a JSON of resampled timestamp data'''
+    '''Return a JSON of daily summed event data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
         df = tr.to_df(data)
@@ -95,7 +95,7 @@ def daily():
 
 @app.route('/hourly', methods=['POST'])
 def hourly():
-    '''Return a JSON of resampled timestamp data'''
+    '''Return a JSON of hourly summed data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
         df = tr.to_df(data)
@@ -105,13 +105,26 @@ def hourly():
         return resp
 
 
-@app.route('/weekly_hours', methods=['POST'])
-def weekly_hours():
-    '''Return a JSON of resampled timestamp data'''
+@app.route('/daily_hours', methods=['POST'])
+def daily_hours():
+    '''Return a JSON of weekly event data by hour'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
         df = tr.to_df(data)
-        json_return = tr.weekly_hours(df=df)
+        json_return = tr.daily_hours(df=df, to_json=True)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application/json')
+        return resp
+
+
+@app.route('/forward', methods=['POST'])
+def forward():
+    '''Return a JSON of a given number of hourly events'''
+    if request.method == 'POST':
+        data = json.loads(request.form['data'])
+        periods = json.loads(request.form['periods'])
+        df = tr.to_df(data)
+        json_return = tr.forward(df=df, periods=periods)
         resp = Response(json.dumps(json_return), status=200,
                         mimetype='application/json')
         return resp
