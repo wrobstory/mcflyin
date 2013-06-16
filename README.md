@@ -19,7 +19,7 @@ That puts Python in kind of a unique position: powerful web tools, powerful scie
 Getting Started
 ---------------
 
-First we need to find some data. We're going to use some data that Wes McKinney provided in a recent ![blog post](http://wesmckinney.com/blog/?p=687), with some statistics on Python posts on Stack Overflow. This is something of a contrived example: I'm manipulating the data in Python, sending to a Python backend, and then getting a response to manipulate in Python. Just know that all you need is an array of timestamp strings, no matter your language.
+First we need to find some data. We're going to use some data that Wes McKinney provided in a recent [blog post](http://wesmckinney.com/blog/?p=687), with some statistics on Python posts on Stack Overflow. This is something of a contrived example: I'm manipulating the data in Python, sending to a Python backend, and then getting a response to manipulate in Python. Just know that all you need is an array of timestamp strings, no matter your language.
 
 ```python
 import pandas as pd
