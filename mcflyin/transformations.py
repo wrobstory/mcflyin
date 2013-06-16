@@ -24,6 +24,8 @@ def jsonify(func):
         def typeit(obj):
             if isinstance(obj, str):
                 return obj
+            elif pd.isnull(obj):
+                return str(obj)
             elif hasattr(obj, 'timetuple'):
                 return obj.isoformat()
             elif hasattr(obj, 'item'):
