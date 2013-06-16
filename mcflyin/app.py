@@ -81,6 +81,30 @@ def rolling_sum():
         return resp
 
 
+@app.route('/daily', methods=['POST'])
+def daily():
+    '''Return a JSON of resampled timestamp data'''
+    if request.method == 'POST':
+        data = json.loads(request.form['data'])
+        df = tr.to_df(data)
+        json_return = tr.daily(df=df)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application/json')
+        return resp
+
+
+@app.route('/hourly', methods=['POST'])
+def hourly():
+    '''Return a JSON of resampled timestamp data'''
+    if request.method == 'POST':
+        data = json.loads(request.form['data'])
+        df = tr.to_df(data)
+        json_return = tr.hourly(df=df)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application/json')
+        return resp
+
+
 def run():
     '''Run the McFlyin API'''
     app.run(debug='True')

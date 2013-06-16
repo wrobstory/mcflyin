@@ -80,18 +80,42 @@ def rolling_sum(df=None, window=None, freq=None):
     return rolling
 
 
-@jsonify
-def day_of_week(df=None, freq=None):
-    '''Calculate daily statistics, given a sampling frequency'''
+def day_hours(df):
+    '''Get Hourly and Daily columns from DataFrame timestamps'''
     df = df.resample('T', how='sum')
     df['DoW'] = df['Hour'] = df.index
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
-                5: 'Friday', 6: 'Saturday', 7: 'Sunday', }
+                5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
     order = [y for x, y in weekdays.iteritems()]
     df['DoW'] = df['DoW'].apply(lambda x: weekdays[x.isoweekday()])
     df['Hour'] = df['Hour'].apply(lambda x: x.hour)
-    daily = df.groupby('DoW').sum()['Check-in'].rename(order)
-    hourly = df.groupby('Hour').sum()['Check-in']
+    return df, order
+
+
+@jsonify
+def daily(df=None):
+    '''Calculate daily sum statistics'''
+    key = lambda x: x.isoweekday()
+    weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+                5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
+    daily = df.groupby(key).sum()['Check-in']
+    daily = pd.DataFrame(daily.rename(weekdays))
+    return daily
+
+
+@jsonify
+def hourly(df=None):
+    '''Calculate hourly sum statistics'''
+    key = lambda x: x.hour
+    hourly = pd.DataFrame(df.groupby(key).sum())
+    return hourly
+
+
+def weekly_hours(df=None):
+    '''Hourly distribution by day of week'''
+    key1 = lambda x: x.isoweekday()
+    key2 = lambda x: x.hour
+    weekly = df.groupby([key1, key2]).sum()
 
 
 def combined_resample(df=None, freq=None, fill='pad'):
