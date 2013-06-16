@@ -2,7 +2,7 @@
 
 ###A timeseries transformation API built on Pandas and Flask
 
-This is a small demo of an API to do timeseries transformations build on Flask and Pandas.
+This is a small demo of an API to do timeseries transformations built on Flask and Pandas.
 
 Concept
 -------
