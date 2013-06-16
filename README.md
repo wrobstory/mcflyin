@@ -44,7 +44,7 @@ A simple array of timestamps:
  '2012-04-04 23:17:23']
  ```
 
-With mcflyin running on localhost, lets make a request to resample the data on an hourly basis, to get the number of posts per hour:
+With Mcflyin running on localhost, lets make a request to resample the data on an hourly basis, to get the number of posts per hour:
 
 ```python
 import requests
@@ -57,9 +57,9 @@ response = r.json
 ```
 
 The response is simple JSON:
-```json
-{u'Monthly': {data': [1.0, 2.0, 1.0, 1.0,...
-              time': [u'2011-03-31T00:00:00', '2011-04-30T00:00:00', '2011-05-31T00:00:00', '2011-06-30T00:00:00', '2011-07-31T00:00:00',...
+```js
+{'Monthly': {'data': [1.0, 2.0, 1.0, 1.0,...
+             'time': ['2011-03-31T00:00:00', '2011-04-30T00:00:00', '2011-05-31T00:00:00', '2011-06-30T00:00:00', '2011-07-31T00:00:00',...
 ```
 
 Here's the distribution of daily questions on Stack Overflow for Pandas (monthly probably would have been a little more informative):
@@ -69,7 +69,7 @@ Here's the distribution of daily questions on Stack Overflow for Pandas (monthly
 Let's call Mcflyin for a rolling sum on a seven-day window:
 
 ```python
-freq = {'D': 'Daily'}
+freq = {'D': 'Weekly Rolling'}
 sends = {'freq': json.dumps(freq), 'data': json.dumps(data), 'window': 7}
 r = requests.post('http://127.0.0.1:5000/rolling_sum', data=sends)
 response = r.json
