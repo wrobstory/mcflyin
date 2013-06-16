@@ -113,9 +113,18 @@ def hourly(df=None):
 
 def weekly_hours(df=None):
     '''Hourly distribution by day of week'''
+    weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+                5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
     key1 = lambda x: x.isoweekday()
     key2 = lambda x: x.hour
-    weekly = df.groupby([key1, key2]).sum()
+    weekly = df.groupby([key1, key2]).sum().unstack(0)['Check-in']
+    weekly.index.name = 'Hour'
+    weekly = weekly.rename(columns=weekdays)
+    jsonified = jsonify(lambda frame: frame)
+    weekly_hours = {}
+    for day in weekly.iterkv():
+        weekly_hours.update(jsonified(pd.DataFrame(day[1])))
+    return weekly_hours
 
 
 def combined_resample(df=None, freq=None, fill='pad'):

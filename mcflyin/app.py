@@ -105,6 +105,18 @@ def hourly():
         return resp
 
 
+@app.route('/weekly_hours', methods=['POST'])
+def weekly_hours():
+    '''Return a JSON of resampled timestamp data'''
+    if request.method == 'POST':
+        data = json.loads(request.form['data'])
+        df = tr.to_df(data)
+        json_return = tr.weekly_hours(df=df)
+        resp = Response(json.dumps(json_return), status=200,
+                        mimetype='application/json')
+        return resp
+
+
 def run():
     '''Run the McFlyin API'''
     app.run(debug='True')
