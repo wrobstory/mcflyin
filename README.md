@@ -77,6 +77,43 @@ response = r.json
 
 ![Rolling](http://farm4.staticflickr.com/3682/9060743479_2962e61881_o.jpg)
 
+Let's look at the total questions asked by day:
+
+```python
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+r = requests.post('http://127.0.0.1:5000/daily', data=sends)
+response = r.json
+```
+![dailysum](http://farm3.staticflickr.com/2838/9064294004_200b81b303_o.jpg)
+
+and daily means:
+
+```python
+sends = {'data': json.dumps(data), 'how': json.dumps('mean')}
+r = requests.post('http://127.0.0.1:5000/daily', data=sends)
+response = r.json
+```
+![dailymean](http://farm4.staticflickr.com/3786/9064294028_c8bf17fa09_o.jpg)
+
+The same for hourly:
+
+```python
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+r = requests.post('http://127.0.0.1:5000/hourly', data=sends)
+response = r.json
+```
+![dailymean](http://farm4.staticflickr.com/3814/9062065097_75d871a7bc_o.jpg)
+
+Finally, we can look at hourly by day-of-week:
+
+```python
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+r = requests.post('http://127.0.0.1:5000/daily_hours', data=sends)
+response = r.json
+```
+![hourdow](http://farm3.staticflickr.com/2838/9064294126_6036e724ba_o.jpg)
+
+Live demo [here](http://bl.ocks.org/wrobstory/5794343)
 
 
 

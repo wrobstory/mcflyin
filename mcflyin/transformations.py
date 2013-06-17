@@ -96,31 +96,43 @@ def day_hours(df):
 
 
 @jsonify
-def daily(df=None):
-    '''Calculate daily sum statistics'''
+def daily(df=None, how=None):
+    '''Calculate daily summed statistics'''
     key = lambda x: x.isoweekday()
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
-    daily = df.groupby(key).sum()['Events']
-    daily = pd.DataFrame(daily.rename(weekdays))
+    if how == 'mean':
+        sampled = df.resample('D', how='sum')
+        daily = sampled.groupby(key).mean()
+    else:
+        daily = df.groupby(key).sum()
+    daily = daily.rename(weekdays)
     return daily
 
 
 @jsonify
-def hourly(df=None):
+def hourly(df=None, how=None):
     '''Calculate hourly sum statistics'''
     key = lambda x: x.hour
-    hourly = pd.DataFrame(df.groupby(key).sum())
+    if how == 'mean':
+        sampled = df.resample('H', how='sum')
+        hourly = sampled.groupby(key).mean()
+    else:
+        hourly = df.groupby(key).sum()
     return hourly
 
 
-def daily_hours(df=None, to_json=False):
-    '''Hourly distribution by day of week'''
+def daily_hours(df=None, to_json=False, how=None):
+    '''Hourly summed distribution by day of week'''
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
     key1 = lambda x: x.isoweekday()
     key2 = lambda x: x.hour
-    weekly = df.groupby([key1, key2]).sum().unstack(0)['Events']
+    if how == 'mean':
+        resample = df.resample('H', how='sum')
+        weekly = resample.groupby([key1, key2]).mean().unstack(0)['Events']
+    else:
+        weekly = df.groupby([key1, key2]).sum().unstack(0)['Events']
     weekly.index.name = 'Hour'
     weekly = weekly.rename(columns=weekdays)
     if to_json:
@@ -135,10 +147,10 @@ def daily_hours(df=None, to_json=False):
 
 @jsonify
 def forward(df=None, periods=180):
-    '''Generate hourly distribution of events for the next `periods`'''
+    '''Generate hourly prediction of events for the next `periods`'''
     weekdays = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
                 5: 'Friday', 6: 'Saturday', 7: 'Sunday'}
-    dist = daily_hours(df, to_json=False)
+    dist = daily_hours(df, to_json=False, how='mean')
     hourly = df.resample('H', how='sum')
     h_range = pd.date_range(hourly.index[-1] + offsets.Hour(),
                             periods=periods, freq='H')

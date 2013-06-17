@@ -86,8 +86,9 @@ def daily():
     '''Return a JSON of daily summed event data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
+        how = json.loads(request.form['how'])
         df = tr.to_df(data)
-        json_return = tr.daily(df=df)
+        json_return = tr.daily(df=df, how=how)
         resp = Response(json.dumps(json_return), status=200,
                         mimetype='application/json')
         return resp
@@ -98,8 +99,9 @@ def hourly():
     '''Return a JSON of hourly summed data'''
     if request.method == 'POST':
         data = json.loads(request.form['data'])
+        how = json.loads(request.form['how'])
         df = tr.to_df(data)
-        json_return = tr.hourly(df=df)
+        json_return = tr.hourly(df=df, how=how)
         resp = Response(json.dumps(json_return), status=200,
                         mimetype='application/json')
         return resp

@@ -42,43 +42,17 @@ var graph = new Rickshaw.Graph( {
                 min: 'auto',
                 width: 750,
                 height: 400,
-                renderer: 'area',
+                renderer: 'line',
                 series: [
-                         {name: 'Monday',
+                         {name: 'Events',
                           color: palette.color(),
-                          data: json[0].data},
-                          
-                         {name: 'Tuesday',
-                          color: palette.color(),
-                          data: json[1].data},
-                          
-                         {name: 'Friday',
-                          color: palette.color(),
-                          data: json[2].data},
-                          
-                         {name: 'Wednesday',
-                          color: palette.color(),
-                          data: json[3].data},
-                          
-                         {name: 'Thursday',
-                          color: palette.color(),
-                          data: json[4].data},
-                          
-                         {name: 'Sunday',
-                          color: palette.color(),
-                          data: json[5].data},
-                          
-                         {name: 'Saturday',
-                          color: palette.color(),
-                          data: json[6].data}
+                          data: json[0].data}
                           ]
                 })
 
+var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
 
 
-var xAxis = new Rickshaw.Graph.Axis.X( {
-    graph: graph
-} );
 
 var y_axis = new Rickshaw.Graph.Axis.Y( {
         graph: graph,
@@ -89,7 +63,7 @@ var y_axis = new Rickshaw.Graph.Axis.Y( {
 
 var hoverDetail = new Rickshaw.Graph.HoverDetail( {
     graph: graph,
-    xFormatter: function(x){return Math.floor(x / 10) * 10}
+    
 } );
 
 var legend = new Rickshaw.Graph.Legend( {

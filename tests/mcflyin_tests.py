@@ -88,7 +88,7 @@ class testMcflyin(object):
 
     def test_daily(self):
         '''Test daily summing'''
-        send = {'data': json.dumps(self.data)}
+        send = {'data': json.dumps(self.data), 'how': json.dumps('sum')}
         rv = self.app.post('daily', data=send)
         df = single_df(json.loads(rv.data))
         all_1440 = df['Events'] == 1440
@@ -96,7 +96,7 @@ class testMcflyin(object):
 
     def test_hourly(self):
         '''Test hourly summing'''
-        send = {'data': json.dumps(self.data)}
+        send = {'data': json.dumps(self.data), 'how': json.dumps('sum')}
         rv = self.app.post('hourly', data=send)
         rv_dict = json.loads(rv.data)
         df = pd.DataFrame({'Events': rv_dict['Events']['data']},
@@ -112,7 +112,7 @@ class testMcflyin(object):
                 'Saturday', 'Sunday']
         truthy = pd.DataFrame(60.0, columns=days, index=index)
 
-        send = {'data': json.dumps(self.data)}
+        send = {'data': json.dumps(self.data), 'how': json.dumps('sum')}
         rv = self.app.post('daily_hours', data=send)
         df = multi_df(json.loads(rv.data))
         df = df.reindex(columns=days)
@@ -120,12 +120,13 @@ class testMcflyin(object):
         pdtest.assert_frame_equal(df, truthy)
 
     def test_forward(self):
-        '''Test daily hour summing'''
+        '''Test forward predicting'''
 
         rng = pd.date_range('6/23/2013', periods=180, freq='H')
         truthy = pd.DataFrame({'Events': 60.0}, index=rng)
 
-        send = {'data': json.dumps(self.data), 'periods': json.dumps(180)}
+        send = {'data': json.dumps(self.data), 'periods': json.dumps(180),
+                'how': json.dumps('sum')}
         rv = self.app.post('forward', data=send)
         df = single_df(json.loads(rv.data))
 

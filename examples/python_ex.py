@@ -44,15 +44,24 @@ rmonthly = requests.post('http://127.0.0.1:5000/resample', data=sends_2)
 df_daily = single_df(rdaily.json)
 df_monthly = single_df(rmonthly.json)
 
-#Fill those string NaNs to make Bearcart play nice
-df_daily = df_daily.replace('nan', value=0)
-vis = bearcart.Chart(data=df_daily, plt_type='bar')
-vis.create_chart()
-
 #Rolling sum
-freq = {'D': 'Daily'}
+freq = {'D': 'Weekly Rolling'}
 sends = {'freq': json.dumps(freq), 'data': json.dumps(data), 'window': 7}
 r_rolling = requests.post('http://127.0.0.1:5000/rolling_sum', data=sends)
 df_rolling = single_df(r_rolling.json)
+
+#Daily mean
+sends = {'data': json.dumps(data), 'how': json.dumps('mean')}
+m_daily = requests.post('http://127.0.0.1:5000/daily', data=sends)
+m_dailied = m_daily.json
+df_mdaily = pd.DataFrame({'Events': m_dailied['Events']['data']},
+                         index=m_dailied['Events']['time'])
+
+#Daily overall sum
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+s_daily = requests.post('http://127.0.0.1:5000/daily', data=sends)
+s_dailied = s_daily.json
+df_sdaily = pd.DataFrame({'Events': s_dailied['Events']['data']},
+                         index=s_dailied['Events']['time'])
 
 
