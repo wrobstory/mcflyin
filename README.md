@@ -9,12 +9,12 @@ Concept
 
 The idea is that you can make a POST request to the API with a simple list/array of timestamps, from any language, and get back some interesting transformations of that data.
 
-Why
----
+Why?
+----
 
 Partly to show how straightforward it is to build such a thing. Python is great because it has very powerful, intuitive, quick-to-learn tools for both building web applications and doing data analysis/statistics.
 
-That puts Python in kind of a unique position: powerful web tools, powerful scientific/numerical/statistical data tools. This API is a very simple example of how you can take advantage of both. Go read the source code- it's short and easy to grok.
+That puts Python in kind of a unique position: powerful web tools, powerful scientific/numerical/statistical data tools. This API is a very simple example of how you can take advantage of both. Go read the source code- it's short and easy to grok. If you find errors, I would love to know about them. 
 
 Getting Started
 ---------------
@@ -44,7 +44,7 @@ A simple array of timestamps:
  '2012-04-04 23:17:23']
  ```
 
-With Mcflyin running on localhost, lets make a request to resample the data on an hourly basis, to get the number of posts per hour:
+With the McFlyin application running on localhost, lets make a request to resample the data on an hourly basis, to get the number of posts per hour:
 
 ```python
 import requests
@@ -66,7 +66,7 @@ Here's the distribution of daily questions on Stack Overflow for Pandas (monthly
 
 ![Daily](http://farm6.staticflickr.com/5497/9062972730_aa34df95a2_o.jpg)
 
-Let's call Mcflyin for a rolling sum on a seven-day window:
+Let's call Mcflyin for a rolling sum on a seven-day window. It will resample to the given ```freq```, then apply the window to the result:
 
 ```python
 freq = {'D': 'Weekly Rolling'}
@@ -115,5 +115,21 @@ response = r.json
 
 Live demo [here](http://bl.ocks.org/wrobstory/5794343)
 
+Dependencies
+------------
+Pandas, Numpy, Requests, Flask
+
+How did you make those colorful graphs?
+--------------------------------------
+[Vincent](https://github.com/wrobstory/vincent) and [Bearcart](https://github.com/wrobstory/bearcart)
+
+Status
+------
+Lots of stuff that could be better- error handling on the requests, probably better handling of weird timestamps,
+etc. This is just a small demo of how powerful Python can be for building a statistics backend. 
+
+If I want to write a front-end in a different language, can I put it in the examples folder?
+---------
+Yes! PR's welcome. 
 
 
