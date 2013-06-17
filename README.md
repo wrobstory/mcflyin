@@ -126,7 +126,7 @@ How did you make those colorful graphs?
 Status
 ------
 Lots of stuff that could be better- error handling on the requests, probably better handling of weird timestamps,
-etc. This is just a small demo of how powerful Python can be for building a statistics backend. 
+etc. This is just a small demo of how powerful Python can be for building a statistics backend with relatively few lines of code.  
 
 If I want to write a front-end in a different language, can I put it in the examples folder?
 ---------
