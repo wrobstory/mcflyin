@@ -14,7 +14,7 @@ Why?
 
 Partly to show how straightforward it is to build such a thing. Python is great because it has very powerful, intuitive, quick-to-learn tools for both building web applications and doing data analysis/statistics.
 
-That puts Python in kind of a unique position: powerful web tools, powerful scientific/numerical/statistical data tools. This API is a very simple example of how you can take advantage of both. Go read the source code- it's short and easy to grok. If you find errors, I would love to know about them. 
+That puts Python in kind of a unique position: powerful web tools, powerful scientific/numerical/statistical data tools. This API is a very simple example of how you can take advantage of both. Go read the source code- it's short and easy to grok. Bug fixes and pull requests welcome. 
 
 Getting Started
 ---------------
