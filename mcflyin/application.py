@@ -134,7 +134,7 @@ def forward():
 
 def run():
     '''Run the McFlyin API'''
-    app.run(debug='True')
+    app.run()
 
 if __name__ == '__main__':
-    app.run(debug='True')
+    app.run()

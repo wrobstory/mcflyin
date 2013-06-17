@@ -11,7 +11,7 @@ But you can take data from ___ to send to an API in Python to transform data in 
 import pandas as pd
 import requests
 import json
-import bearcart
+
 
 #Some DataFrame transformations for convenience
 def single_df(response):
@@ -63,5 +63,23 @@ s_daily = requests.post('http://127.0.0.1:5000/daily', data=sends)
 s_dailied = s_daily.json
 df_sdaily = pd.DataFrame({'Events': s_dailied['Events']['data']},
                          index=s_dailied['Events']['time'])
+
+#Hourly overall sum
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+s_hourly = requests.post('http://127.0.0.1:5000/hourly', data=sends)
+s_hourlied = s_hourly.json
+df_shourly = pd.DataFrame({'Events': s_hourlied['Events']['data']},
+                          index=s_hourlied['Events']['time'])
+
+#Daily hours
+sends = {'data': json.dumps(data), 'how': json.dumps('sum')}
+s_dhours = requests.post('http://127.0.0.1:5000/daily_hours', data=sends)
+df_dhourly = multi_df(s_dhours.json)
+
+
+
+
+
+
 
 
