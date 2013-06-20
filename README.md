@@ -50,7 +50,7 @@ With the McFlyin application running on localhost, lets make a request to resamp
 import requests
 import json
 
-freq = {'M': 'Monthly'}
+freq = {'D': 'Daily'}
 sends = {'freq': json.dumps(freq), 'data': json.dumps(data)}
 r = requests.post('http://127.0.0.1:5000/resample', data=sends)
 response = r.json
