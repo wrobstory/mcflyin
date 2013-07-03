@@ -1,7 +1,5 @@
 #Mcflyin
 
-![panda](http://farm4.staticflickr.com/3721/9167461939_e99014038d_o.jpg)
-
 ###A timeseries transformation API built on Pandas and Flask
 
 This is a small demo of an API to do timeseries transformations built on Flask and Pandas.
