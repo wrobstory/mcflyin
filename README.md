@@ -44,7 +44,7 @@ A simple array of timestamps:
  '2012-04-04 23:17:23']
  ```
 
-With the McFlyin application running on localhost, lets make a request to resample the data on an hourly basis, to get the number of posts per hour:
+With the McFlyin application running on localhost, lets make a request to resample the data on an daily basis, to get the number of posts per day:
 
 ```python
 import requests
