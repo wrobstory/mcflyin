@@ -4,7 +4,7 @@ McFlyin API example.
 
 Take data from Python to send to an API in Python to transform data in Python to receive in Python to transform in Python.
 
-But you can take data from ___ to send to an API in Python to transform data in Python to recieve in ____ to transform in ____
+But you can take data from ___ to send to an API in Python to transform data in Python to receive in ____ to transform in ____
 
 '''
 
